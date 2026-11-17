@@ -52,3 +52,5 @@ dialog{border:1px solid var(--line);border-radius:20px;padding:24px;background:v
 #splash .brand{color:#fff;font-size:36px}#splash .brand svg{color:var(--sun)}#splash h1{margin:16px 0 0}#splash p{opacity:.85;margin:0}
 #splash path.t{stroke:var(--sun);stroke-width:4;stroke-linecap:round;fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:dr .4s ease-out forwards}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#tally .new,#splash path.t{stroke-dashoffset:0!important}}
+.pdfbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}a.btn{text-decoration:none}
+.pdf{display:block;width:100%;height:calc(100vh - 240px);min-height:480px;border:1px solid var(--line);border-radius:16px;background:var(--surf)}
