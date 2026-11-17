@@ -1,6 +1,6 @@
 import {API_URL} from './config.js';
 const $=s=>document.querySelector(s),M=$('#main'),esc=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
-const P={home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+const P={'file-text':'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/>',home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
 'book-open':'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',activity:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
 users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
 settings:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
@@ -101,6 +101,10 @@ function friends(){const fs=ST.SUM.friends;
  $('#af').onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target)),fe=e.target.querySelector('[data-for=form]');v.username=unorm(v.username);fe.textContent='';
   if(v.username){const m=uerr(v.username)||(v.username===ST.U.username?'That is your own username.':'');if(m){e.target.querySelector('[data-for=username]').textContent=m;return}}
   try{const r=await api('addFriend',v);HC.clear();apply(r);toast(r.linked?`${v.name} added and synced.`:`${v.name} added.`);redraw()}catch(x){fe.textContent=x.message}}}
+function tutorial(){const src='tutorial.pdf',inline=navigator.pdfViewerEnabled!==false&&!matchMedia('(pointer:coarse)').matches;
+M.innerHTML=`<h1>Tutorial</h1><p style="color:var(--mut);margin:0 0 14px">A short guide to logging, confirming and settling proxies.</p>
+<p class="pdfbar"><a class="btn pri" href="${src}" target="_blank" rel="noopener">${ic('file-text',16)}Open full screen</a><a class="btn" href="${src}" download="ProxyBook-User-Guide.pdf">${ic('down',16)}Download PDF</a></p>
+${inline?`<iframe class="pdf" src="${src}#view=FitH" title="ProxyBook tutorial (PDF)"></iframe>`:`<div class="panel"><b>Tap Open full screen to read the guide.</b><p style="color:var(--mut);margin:6px 0 0">Your browser cannot show PDFs inside the page, so the guide opens in its own tab.</p></div>`}`}
 function settings(){M.innerHTML=`<h1>Settings</h1>
  <form class="panel" id="sp"><label>Name<input name="name" value="${esc(ST.U.name)}" required></label><button class="btn pri">Save name</button></form>
  <form class="panel" id="su" novalidate>${ubox('username','Username',{value:ST.U.username||''})}<p class="mut">Friends use this to send you proxy requests.</p><button class="btn pri">Save username</button></form>
@@ -135,7 +139,7 @@ function auth(r){const su=r==='signup',fld=(n,l,t,ac)=>`<label>${l}<input name="
   if(bad)return;const fe=M.querySelector('[data-for=form]'),b=e.target.querySelector('.pri');fe.textContent='';b.disabled=true;b.textContent=su?'Creating account…':'Logging in…';
   const idv=(v.id||'').trim(),isE=idv.includes('@'),pl=su?{name:v.name.trim(),username:unorm(v.username),email:v.email.trim(),password:v.pw}:{email:isE?idv:'',username:isE?'':unorm(idv),login:idv,password:v.pw};
   try{enter(await api(su?'signup':'login',pl),su)}catch(x){if(su&&/username/i.test(x.message))M.querySelector('[data-for=username]').textContent=x.message;else fe.textContent=x.message;b.disabled=false;b.textContent=su?'Sign up':'Log in'}}}
-const R={home,requests,ledger,activity,friends,settings,login:auth,signup:auth,forgot};
+const R={home,requests,ledger,activity,friends,settings,tutorial,login:auth,signup:auth,forgot};
 function draw(r){try{(R[r]||home)(r)}catch(e){M.innerHTML=empty(`<b>Could not show this screen.</b> ${esc(e.message)}`,'<p><button class="btn" data-a="retry">Try again</button></p>')}}
 const live=()=>!$('dialog[open]')&&!/INPUT|SELECT/.test(document.activeElement.tagName)&&['home','requests','ledger','friends'].includes(location.hash.slice(2)||'home');
 const isOpen=()=>document.body.classList.contains('open');
